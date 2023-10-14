@@ -1,41 +1,38 @@
 import React from "react";
 
+import { Navbar, Task } from "@/components";
+
 const index = () => {
   return (
-    <div className="h-screen flex justify-center items-center">
-      <div className="flex flex-col gap-y-8 items-center">
-        <div>
-          <h1 className="text-4xl text-white font-medium">Codename Ruka</h1>
+    <>
+      <Navbar />
+      <div className="flex">
+        <div className="w-1/3 bg-neutral-300 grid grid-flow-row gap-4 p-4">
+          <Task
+            title="Card 1"
+            description="Card 1 Description"
+            dueDate={new Date()}
+            isCompleted={true}
+            isFailed={true}
+          />
+          <Task
+            title="Card 2"
+            description="Card 2 Description"
+            dueDate={new Date()}
+            isCompleted={true}
+            isFailed={false}
+          />
+          <Task
+            title="Card 3"
+            description="Card 2 Description"
+            dueDate={new Date()}
+            isCompleted={false}
+            isFailed={false}
+          />
         </div>
-        <div className="w-[30rem] bg-neutral-300 rounded-lg flex flex-col items-center px-6 pb-6 pt-2 gap-6">
-          <div className="form-control w-full">
-            <label className="label">
-              <span className="label-text text-black text-base">Username</span>
-            </label>
-            <input
-              type="text"
-              placeholder="Type here"
-              className="input input-bordered bg-white !outline-neutral-500 shadow"
-            />
-            <label className="label">
-              <span className="label-text text-black text-base">Password</span>
-            </label>
-            <input
-              type="text"
-              placeholder="Type here"
-              className="input input-bordered bg-white !outline-neutral-500 shadow"
-            />
-          </div>
-          <button className="btn w-52 bg-[#28507d] border-2 text-white">
-            Login
-          </button>
-          <div className="bg-black w-full h-[2px]"></div>
-          <button className="btn w-52 bg-[#c48221] border-2 text-white">
-            Sign up
-          </button>
-        </div>
+        <div className="w-2/3 bg-white"></div>
       </div>
-    </div>
+    </>
   );
 };
 
