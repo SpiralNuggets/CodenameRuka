@@ -1,6 +1,12 @@
 import React from "react";
 
-import { Navbar, Task } from "@/components";
+import { Detail, Navbar, Task } from "@/components";
+
+enum Priority {
+  Low,
+  Medium,
+  High,
+}
 
 const index = () => {
   return (
@@ -30,7 +36,15 @@ const index = () => {
             isFailed={false}
           />
         </div>
-        <div className="w-2/3 bg-white"></div>
+        <div className="w-2/3 bg-[#717274] p-2">
+          <Detail
+            title="Card 1"
+            dueDate={new Date()}
+            shortDescription="Card 1 Short Description"
+            description="Card 1 Description"
+            priority={Priority.Low}
+          />
+        </div>
       </div>
     </>
   );
