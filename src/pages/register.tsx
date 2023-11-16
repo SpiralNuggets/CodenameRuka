@@ -25,7 +25,7 @@ const register = () => {
               placeholder="Type here"
               className="input input-bordered bg-white !outline-neutral-500 shadow"
             />
-            <label className="label">Retype Password</label>
+            <label className="label">Confirm Password</label>
             <input
               type="text"
               placeholder="Type here"
