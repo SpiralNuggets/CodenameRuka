@@ -10,7 +10,7 @@ const login = () => {
         <div className="w-64 sm:w-80 md:w-[30rem] bg-neutral-300 rounded-lg flex flex-col items-center px-6 pb-6 pt-2 gap-6">
           <div className="form-control w-full">
             <label className="label">
-              <span className="label-text text-black text-base">Username</span>
+              <span className="label-text text-black text-base">Email Address</span>
             </label>
             <input
               type="text"
