@@ -103,7 +103,7 @@ const Login = () => {
               </div>
               <div className="flex justify-center">
                 <motion.button
-                  className={`btn w-52 border-2 ${!isValid || isSubmitting ? 'text-white cursor-not-allowed bg-gray-400 border-0 hover:bg-gray-400' : 'text-white bg-[#28507d] hover:bg-[#1b2e49]'}`}
+                  className={`btn w-52 ${!isValid || isSubmitting ? 'text-white cursor-not-allowed bg-gray-400 border-0 hover:bg-gray-400' : 'text-white bg-[#28507d] hover:bg-[#1b2e49] botder-2'}`}
                   type="submit"
                   initial="hidden"
                   animate="visible"
