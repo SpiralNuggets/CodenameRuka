@@ -125,17 +125,18 @@ const Register = () => {
                   </div>
                 </motion.div>
               </div>
-              <motion.button
-                className={`btn w-full border-2 ${!isValid || isSubmitting ? 'text-white cursor-not-allowed bg-gray-400 border-0 hover:bg-gray-400' : 'text-white bg-[#28507d] hover:bg-[#1b2e49]'}`}
-                type="submit"
-                initial="hidden"
-                animate="visible"
-                variants={fadeAnimation}
-                transition={{ delay: 0.8, duration: 0.6 }}
-              >
-                Sign up
-              </motion.button>
-
+              <div className="flex justify-center">
+                <motion.button
+                  className={`btn w-52 border-2 ${!isValid || isSubmitting ? 'text-white cursor-not-allowed bg-gray-400 border-0 hover:bg-gray-400' : 'text-white bg-[#28507d] hover:bg-[#1b2e49]'}`}
+                  type="submit"
+                  initial="hidden"
+                  animate="visible"
+                  variants={fadeAnimation}
+                  transition={{ delay: 0.8, duration: 0.6 }}
+                >
+                  Sign up
+                </motion.button>
+              </div>
             </Form>
             )}
           </Formik>
