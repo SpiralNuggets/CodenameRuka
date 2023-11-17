@@ -1,5 +1,3 @@
-// Register.tsx
-
 import React from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -64,7 +62,9 @@ const Register = () => {
             initialValues={initialValues}
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
+            validateOnMount
           >
+            {({ isValid, isSubmitting }) => (
             <Form className="w-full space-y-6">
               <div>
                 <motion.div
@@ -126,7 +126,7 @@ const Register = () => {
                 </motion.div>
               </div>
               <motion.button
-                className="btn w-full bg-[#28507d] hover:bg-[#1b2e49] border-2 text-white"
+                className={`btn w-full border-2 ${!isValid || isSubmitting ? 'text-white cursor-not-allowed bg-gray-400 border-0 hover:bg-gray-400' : 'text-white bg-[#28507d] hover:bg-[#1b2e49]'}`}
                 type="submit"
                 initial="hidden"
                 animate="visible"
@@ -135,7 +135,9 @@ const Register = () => {
               >
                 Sign up
               </motion.button>
+
             </Form>
+            )}
           </Formik>
         </div>
       </div>
