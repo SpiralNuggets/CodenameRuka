@@ -1,107 +1,142 @@
 // Register.tsx
 
-import React, { useState } from "react";
+import React from "react";
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import * as Yup from "yup";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebase";
+import { motion } from "framer-motion";
 
-interface LoginFormValues {
+interface RegisterFormValues {
   email: string;
   password: string;
+  confirmPassword: string;
 }
 
 const Register = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-
-  const validateEmail = () => {
-    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-    return emailRegex.test(email);
+  const initialValues: RegisterFormValues = {
+    email: "",
+    password: "",
+    confirmPassword: "",
   };
 
-  const validatePassword = () => {
-    // Implement your password validation logic here
-    // For a simple example, checking if it has at least 6 characters
-    return password.length >= 6;
-  };
+  const validationSchema = Yup.object({
+    email: Yup.string().nullable().email("Invalid email address").required("Required"),
+    password: Yup.string().min(6, "Password must be at least 6 characters").required("Required"),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password")], "Passwords must match")
+      .required("Required"),
+  });
 
-  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!validateEmail()) {
-      setError("Invalid email address");
-      return;
-    }
-    if (!validatePassword()) {
-      setError("Password must be at least 6 characters long");
-      return;
-    }
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
+  const handleSubmit = async (values: RegisterFormValues, { setSubmitting, setFieldError }: any) => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
       console.log(userCredential);
     } catch (error) {
       if (error instanceof Error) {
-        setError(error.message);
+        setFieldError("email", error.message);
       } else {
-        console.error('Unexpected error', error);
+        console.error("Unexpected error", error);
       }
+    } finally {
+      setSubmitting(false);
     }
+  };
+
+  const fadeAnimation = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 },
   };
 
   return (
     <div className="h-screen flex justify-center items-center">
       <div className="flex flex-col gap-y-8 items-center">
-        <div>
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={fadeAnimation}
+          transition={{ duration: 0.6 }}
+        >
           <h1 className="text-4xl text-white font-medium">Codename Ruka</h1>
-        </div>
+        </motion.div>
         <div className="w-64 sm:w-80 md:w-[30rem] bg-neutral-300 rounded-lg flex flex-col items-center px-6 pb-6 pt-2 gap-6">
-          <form onSubmit={handleFormSubmit} className="w-full space-y-6">
-            <div>
-                <div className="form-control">
-                <label className="label">
-                    <span className="label-text text-black text-base">Email Address</span>
-                </label>
-                <input
-                    type="text"
-                    placeholder="Type here"
-                    className="input input-bordered bg-white !outline-neutral-500 shadow"
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}
-                />
-                </div>
-                <div className="form-control">
-                <label className="label">
-                    <span className="label-text text-black text-base">Password</span>
-                </label>
-                <input
-                    type="password"
-                    placeholder="Type here"
-                    className="input input-bordered bg-white !outline-neutral-500 shadow"
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
-                />
-                </div>
-                <div className="form-control">
-                <label className="label">Confirm Password</label>
-                <input
-                    type="password"
-                    placeholder="Type here"
-                    className="input input-bordered bg-white !outline-neutral-500 shadow"
-                    value={confirmPassword}
-                    onChange={(event) => setConfirmPassword(event.target.value)}
-                />
-                </div>
-            </div>
-            <button className="btn w-full bg-[#28507d] hover:bg-[#1b2e49] border-2 text-white" type="submit">
-              Sign up
-            </button>
-          </form>
-          {error && <p className="text-red-500">{error}</p>}
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+          >
+            <Form className="w-full space-y-6">
+              <div>
+                <motion.div
+                  initial="hidden"
+                  animate="visible"
+                  variants={fadeAnimation}
+                  transition={{ delay: 0.2, duration: 0.6 }}
+                >
+                  <div className="form-control">
+                    <label className="label">
+                      <span className="label-text text-black text-base">Email Address</span>
+                    </label>
+                    <Field
+                      type="text"
+                      placeholder="Type here"
+                      name="email"
+                      className="input input-bordered bg-white !outline-neutral-500 shadow"
+                    />
+                    <ErrorMessage name="email" component="p" className="text-red-500" />
+                  </div>
+                </motion.div>
+                <motion.div
+                  initial="hidden"
+                  animate="visible"
+                  variants={fadeAnimation}
+                  transition={{ delay: 0.4, duration: 0.6 }}
+                >
+                  <div className="form-control">
+                    <label className="label">
+                      <span className="label-text text-black text-base">Password</span>
+                    </label>
+                    <Field
+                      type="password"
+                      placeholder="Type here"
+                      name="password"
+                      className="input input-bordered bg-white !outline-neutral-500 shadow"
+                    />
+                    <ErrorMessage name="password" component="p" className="text-red-500" />
+                  </div>
+                </motion.div>
+                <motion.div
+                  initial="hidden"
+                  animate="visible"
+                  variants={fadeAnimation}
+                  transition={{ delay: 0.6, duration: 0.6 }}
+                >
+                  <div className="form-control">
+                    <label className="label">
+                      <span className="label-text text-black text-base">Confirm Password</span>
+                    </label>
+                    <Field
+                      type="password"
+                      placeholder="Type here"
+                      name="confirmPassword"
+                      className="input input-bordered bg-white !outline-neutral-500 shadow"
+                    />
+                    <ErrorMessage name="confirmPassword" component="p" className="text-red-500" />
+                  </div>
+                </motion.div>
+              </div>
+              <motion.button
+                className="btn w-full bg-[#28507d] hover:bg-[#1b2e49] border-2 text-white"
+                type="submit"
+                initial="hidden"
+                animate="visible"
+                variants={fadeAnimation}
+                transition={{ delay: 0.8, duration: 0.6 }}
+              >
+                Sign up
+              </motion.button>
+            </Form>
+          </Formik>
         </div>
       </div>
     </div>
