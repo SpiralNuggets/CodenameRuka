@@ -1,29 +1,34 @@
 import React from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebase";
 import { motion } from "framer-motion";
 
-interface LoginFormValues {
+interface RegisterFormValues {
   email: string;
   password: string;
+  confirmPassword: string;
 }
 
-const Login = () => {
-  const initialValues: LoginFormValues = {
+const Register = () => {
+  const initialValues: RegisterFormValues = {
     email: "",
     password: "",
+    confirmPassword: "",
   };
 
   const validationSchema = Yup.object({
     email: Yup.string().nullable().email("Invalid email address").required("Required"),
-    password: Yup.string().required("Required"),
+    password: Yup.string().min(6, "Password must be at least 6 characters").required("Required"),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password")], "Passwords must match")
+      .required("Required"),
   });
 
-  const handleSubmit = async (values: LoginFormValues, { setSubmitting, setFieldError }: any) => {
+  const handleSubmit = async (values: RegisterFormValues, { setSubmitting, setFieldError }: any) => {
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
+      const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
       console.log(userCredential);
     } catch (error) {
       if (error instanceof Error) {
@@ -100,39 +105,45 @@ const Login = () => {
                     <ErrorMessage name="password" component="p" className="text-red-500" />
                   </div>
                 </motion.div>
-              </div>
-              <div className="flex justify-center">
-                <motion.button
-                  className={`btn w-52 ${!isValid || isSubmitting ? 'text-white cursor-not-allowed bg-gray-400 border-0 hover:bg-gray-400' : 'text-white bg-[#28507d] hover:bg-[#1b2e49] botder-2'}`}
-                  type="submit"
+                <motion.div
                   initial="hidden"
                   animate="visible"
                   variants={fadeAnimation}
                   transition={{ delay: 0.6, duration: 0.6 }}
                 >
-                  Login
+                  <div className="form-control">
+                    <label className="label">
+                      <span className="label-text text-black text-base">Confirm Password</span>
+                    </label>
+                    <Field
+                      type="password"
+                      placeholder="Type here"
+                      name="confirmPassword"
+                      className="input input-bordered bg-white !outline-neutral-500 shadow"
+                    />
+                    <ErrorMessage name="confirmPassword" component="p" className="text-red-500" />
+                  </div>
+                </motion.div>
+              </div>
+              <div className="flex justify-center">
+                <motion.button
+                  className={`btn w-52 ${!isValid || isSubmitting ? 'text-white cursor-not-allowed bg-gray-400 border-0 hover:bg-gray-400' : 'text-white bg-[#28507d] hover:bg-[#1b2e49] border-2'}`}
+                  type="submit"
+                  initial="hidden"
+                  animate="visible"
+                  variants={fadeAnimation}
+                  transition={{ delay: 0.8, duration: 0.6 }}
+                >
+                  Sign up
                 </motion.button>
               </div>
-
             </Form>
             )}
           </Formik>
-          <div className="bg-black w-full h-[1px]"></div>
-          <div className="flex justify-center">
-            <motion.button
-              className="btn w-52 border-2 bg-[#c48221] hover:bg-[#8e601d] text-white"
-              initial="hidden"
-              animate="visible"
-              variants={fadeAnimation}
-              transition={{ delay: 0.8, duration: 0.6 }}
-            >
-              Sign up
-            </motion.button>
-           </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Register;
