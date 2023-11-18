@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebase";
 import { motion } from "framer-motion";
+import toast, { Toaster } from "react-hot-toast";
 
 interface RegisterFormValues {
   email: string;
@@ -30,9 +31,16 @@ const Register = () => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
       console.log(userCredential);
+      toast.success("Account created successfully!");
     } catch (error) {
       if (error instanceof Error) {
-        setFieldError("email", error.message);
+        if (error.message.includes("already in use")) {
+          setFieldError("email", "Email already in use");
+          toast.error("Email already in use");
+        } else {
+          setFieldError("email", error.message);
+          toast.error(error.message);
+        }
       } else {
         console.error("Unexpected error", error);
       }
@@ -48,6 +56,9 @@ const Register = () => {
 
   return (
     <div className="h-screen flex justify-center items-center">
+      <Toaster
+      position="top-center"
+      />
       <div className="flex flex-col gap-y-8 items-center">
         <motion.div
           initial="hidden"
@@ -133,6 +144,10 @@ const Register = () => {
                   animate="visible"
                   variants={fadeAnimation}
                   transition={{ delay: 0.8, duration: 0.6 }}
+                  onClick={() => {
+                    console.log("clicked");
+                    }
+                  }
                 >
                   Sign up
                 </motion.button>
