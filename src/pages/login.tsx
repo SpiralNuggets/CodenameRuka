@@ -31,13 +31,7 @@ const Login = () => {
       if (error instanceof Error) {
         if (error.message.includes("invalid-login-credentials")) {
           setFieldError("email", "Invalid login credentials");
-          toast.custom((t) => (
-            <div className="toast">
-              <div className="alert alert-error">
-                <span>Invalid Login Credentials</span>
-              </div>
-            </div>
-          ));
+          toast.error("Invalid login credentials");
         }
       } else {
         console.error("Unexpected error", error);
