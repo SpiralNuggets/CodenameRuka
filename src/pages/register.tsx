@@ -34,7 +34,7 @@ const Register = () => {
       toast.success("Account created successfully!");
     } catch (error) {
       if (error instanceof Error) {
-        if (error.message.includes("already in use")) {
+        if (error.message.includes("email-already-exists")) {
           setFieldError("email", "Email already in use");
           toast.error("Email already in use");
         } else {
