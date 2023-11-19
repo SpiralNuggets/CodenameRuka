@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useState, useEffect} from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -14,7 +14,8 @@ interface LoginFormValues {
 
 const Login = () => {
 
-  const [cookies, setCookie] = useCookies(["user"]);
+  const [cookies, setCookie] = useCookies(["user"])
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const initialValues: LoginFormValues = {
     email: "",
@@ -38,9 +39,7 @@ const Login = () => {
           sameSite: true,
         });
 
-        useEffect(() => {
-          window.location.href = "/";
-        }, []);
+        setIsLoggedIn(true);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -55,6 +54,12 @@ const Login = () => {
       setSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    if(isLoggedIn){
+      window.location.href = "/";
+    }
+  }, [isLoggedIn]);
 
   const fadeAnimation = {
     hidden: { opacity: 0 },
