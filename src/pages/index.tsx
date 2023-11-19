@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import { database } from "@/firebase";
 import { ref, onValue, child, get } from "firebase/database";
 import { Detail, Navbar, Task } from "@/components";
-import { useCookies, removeCookie } from "react-cookie";
+import { useCookies } from "react-cookie";
 
 enum Priority {
   Low,
