@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -38,7 +38,9 @@ const Login = () => {
           sameSite: true,
         });
 
-        window.location.href = "/main";
+        useEffect(() => {
+          window.location.href = "/";
+        }, []);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -146,6 +148,7 @@ const Login = () => {
                 animate="visible"
                 variants={fadeAnimation}
                 transition={{ delay: 0.8, duration: 0.6 }}
+                onClick={() => window.location.href = "/register"}
               >
                 Sign up
               </motion.button>
