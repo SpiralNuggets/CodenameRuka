@@ -10,20 +10,20 @@ enum Priority {
   High,
 }
 
-const index = () => {
+const Index = () => {
 
-  let user = null;
+  let user = {};
   const [cookies, setCookie, removeCookie] = useCookies(["user"]);
   
   function isLoggedIn() {
   if (cookies.user) {
-    user = cookies.user;
+    user = cookies.user
+    console.log(user)
+    return true
   } else {
-    useEffect(() => {
-      window.location.href = "/login";
-    }, []);
+    console.log("not logged in")
   }
-  }
+}
   
   let tasks = {}
 
@@ -32,6 +32,7 @@ const index = () => {
   get(child(reference, `users/${user.uid}`)).then((snapshot) => {
     if (snapshot.exists()) {
       tasks = snapshot.val()
+      console.log(tasks)
     } else {
       console.log("No data available");
     }
@@ -94,4 +95,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;
