@@ -5,6 +5,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebase";
 import { motion } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast";
+import { useCookies } from "react-cookie";
 
 interface LoginFormValues {
   email: string;
@@ -12,6 +13,9 @@ interface LoginFormValues {
 }
 
 const Login = () => {
+
+  const [cookies, setCookie] = useCookies(["user"]);
+
   const initialValues: LoginFormValues = {
     email: "",
     password: "",
@@ -27,6 +31,15 @@ const Login = () => {
       const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
       console.log(userCredential);
       toast.success("Logged in successfully!");
+      if (userCredential.user) {
+        setCookie("user", userCredential.user, { // im putting the whole user object in the cookie
+          path: "/",
+          maxAge: 3600, // Expires after 1hr
+          sameSite: true,
+        });
+
+        window.location.href = "/main";
+      }
     } catch (error) {
       if (error instanceof Error) {
         if (error.message.includes("invalid-login-credentials")) {
