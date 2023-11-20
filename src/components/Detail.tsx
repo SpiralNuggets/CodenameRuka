@@ -30,7 +30,7 @@ const Detail = ({
       onSubmit={values => { /* implement your submission logic here */ }}
       enableReinitialize
     >
-      {({ values, setFieldValue }) => (
+      {({ values, setFieldValue, handleSubmit }) => (
         <Form className="flex flex-col gap-y-4">
           <div className="flex items-center gap-x-2">
             <h1 className="text-white">Title:</h1>
@@ -89,6 +89,17 @@ const Detail = ({
               onClick={() => setFieldValue('priority', Priority.High)}
             />
           </div>
+          <button
+  type="button"
+  onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    handleSubmit();
+  }}
+  className="btn btn-primary mt-4"
+  style={{ width: "100px" }} // Adjust the width as needed
+>
+  Update
+</button>
         </Form>
       )}
     </Formik>
