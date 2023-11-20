@@ -22,7 +22,7 @@ const Task = ({
 }: TaskProps) => {
   return (
     <div 
-      className="bg-neutral-400 w-full h-auto rounded-lg border-2 border-[#c29b4a] p-2 flex flex-col gap-1 max-h-56" 
+      className="bg-neutral-400 w-full h-auto rounded-lg border-2 border-[#c29b4a] p-2 flex flex-col gap-1 max-h-56 mb-2" 
       onClick={handleClick} // Added onClick event here
     >
       <div className="bg-[#3a3d49] h-8 w-full rounded flex items-center p-2">
