@@ -90,7 +90,7 @@ const Index = () => {
 
   return (
     <>
-      <Navbar />
+      <Navbar onAddTask={handleAddTask} />
       <div className="flex">
         <div
           className="w-1/3 bg-neutral-300 p-4 overflow-y-auto max-h-screen" // Set max height and enable vertical scrolling
@@ -113,13 +113,6 @@ const Index = () => {
                 />
               ))}
           </div>
-          {/* Add Task Button */}
-          <button
-            onClick={handleAddTask}
-            className="btn btn-primary mt-4"
-          >
-            Add Task
-          </button>
         </div>
         <div className="w-2/3 bg-[#717274] p-2">
           <Detail
