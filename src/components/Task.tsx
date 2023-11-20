@@ -3,7 +3,7 @@ import { FiFlag } from "react-icons/fi";
 import { BsThreeDots } from "react-icons/bs";
 
 interface TaskProps {
-  title: string;
+  title?: string | (() => string);
   dueDate?: Date;
   description?: string;
   isFailed?: boolean;
@@ -15,7 +15,7 @@ interface TaskProps {
 }
 
 const Task = ({
-  title = "New Card",
+  title = () => "New Card",
   dueDate = new Date(),
   description = "",
   isFailed = false,
@@ -39,7 +39,7 @@ const Task = ({
       onClick={handleClick}
     >
       <div className="bg-[#3a3d49] h-8 w-full rounded flex items-center p-2">
-        <p className="text-white grow">{title}</p>
+        <p className="text-white grow">{typeof title === 'function' ? title() : title}</p>
         <FiFlag className="text-[#c29b4a]" />
       </div>
       <div className="px-1">
