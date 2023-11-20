@@ -122,26 +122,29 @@ const Index = () => {
           id="tasklists"
         >
           <div className="bg-[#3a3d49] w-full rounded p-2">
-            {tasks &&
-              tasks.map((task, index) => (
-                <Task
-                  key={index}
-                  title={task?.title || "Default Title"}
-                  description={task?.description || ""}
-                  dueDate={new Date()}
-                  isCompleted={task?.isCompleted || false}
-                  isFailed={task?.isFailed || false}
-                  handleClick={() => handleSelectTask(task)}
-                  onFailedToggle={(taskId, isFailed) =>
-                    handleFailedToggle(taskId, isFailed)
-                  }
-                  onCompletedToggle={(taskId, isCompleted) =>
-                    handleCompletedToggle(taskId, isCompleted)
-                  }
-                  taskId={task.key}
-                  
-                />
-              ))}
+          {tasks &&
+  tasks.map((task, index) => (
+    <Task
+      key={index}
+      title={task?.title || "Default Title"}
+      description={task?.description || ""}
+      dueDate={
+        task?.dueDate
+          ? new Date(task.dueDate)  // Convert the string to a Date object
+          : new Date()
+      }
+      isCompleted={task?.isCompleted || false}
+      isFailed={task?.isFailed || false}
+      handleClick={() => handleSelectTask(task)}
+      onFailedToggle={(taskId, isFailed) =>
+        handleFailedToggle(taskId, isFailed)
+      }
+      onCompletedToggle={(taskId, isCompleted) =>
+        handleCompletedToggle(taskId, isCompleted)
+      }
+      taskId={task.key}
+    />
+  ))}
           </div>
         </div>
         <div className="w-2/3 bg-[#717274] p-2">
