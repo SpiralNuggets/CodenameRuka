@@ -1,4 +1,3 @@
-// Index.tsx
 import React, { useState, useEffect } from "react";
 import { database } from "@/firebase";
 import { ref, get, set, child } from "firebase/database";
@@ -61,34 +60,6 @@ const Index = () => {
     setCurrentTask(updatedTask);
   };
 
-  const handleFailedToggle = async (taskId: string, isFailed: boolean) => {
-    // Update the tasks array with the new failed state
-    const updatedTasks = tasks.map((task) =>
-      task.key === taskId ? { ...task, isFailed } : task
-    );
-
-    // Update the tasks array in the database
-    const reference = ref(database);
-    await set(child(reference, `users/${cookies.user.uid}`), updatedTasks);
-
-    // Update tasks in the state
-    setTasks(updatedTasks);
-  };
-
-  const handleCompletedToggle = async (taskId: string, isCompleted: boolean) => {
-    // Update the tasks array with the new completed state
-    const updatedTasks = tasks.map((task) =>
-      task.key === taskId ? { ...task, isCompleted } : task
-    );
-
-    // Update the tasks array in the database
-    const reference = ref(database);
-    await set(child(reference, `users/${cookies.user.uid}`), updatedTasks);
-
-    // Update tasks in the state
-    setTasks(updatedTasks);
-  };
-
   const handleAddTask = async () => {
     // Create a new task object
     const newTask = {
@@ -96,8 +67,6 @@ const Index = () => {
       description: "",
       shortDescription: "",
       priority: Priority.Low,
-      isCompleted: false,
-      isFailed: false,
       dueDate: new Date(),
     };
 
@@ -141,15 +110,7 @@ const Index = () => {
                       ? new Date(task.dueDate) // Convert the string to a Date object
                       : new Date()
                   }
-                  isCompleted={task?.isCompleted || false}
-                  isFailed={task?.isFailed || false}
                   handleClick={() => handleSelectTask(task)}
-                  onFailedToggle={(taskId, isFailed) =>
-                    handleFailedToggle(taskId, isFailed)
-                  }
-                  onCompletedToggle={(taskId, isCompleted) =>
-                    handleCompletedToggle(taskId, isCompleted)
-                  }
                   taskId={task.key}
                 />
               ))}
