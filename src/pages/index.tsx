@@ -39,6 +39,7 @@ const Index = () => {
       fetchTasks(); // fetching tasks for the logged-in user
     } else {
       console.log("User not logged in yet!");
+      window.location.href = "/login";
     }
   }, [cookies.user]); // dependency on `cookies.user`
 
