@@ -1,6 +1,6 @@
-import React, {useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { database } from "@/firebase";
-import { ref, onValue, child, get } from "firebase/database";
+import { ref, onValue, child, get, set, remove } from "firebase/database";
 import { Detail, Navbar, Task } from "@/components";
 import { useCookies } from "react-cookie";
 
@@ -11,91 +11,58 @@ enum Priority {
 }
 
 const Index = () => {
-
-  let user = {};
   const [cookies, setCookie, removeCookie] = useCookies(["user"]);
-  
-  function isLoggedIn() {
-  if (cookies.user) {
-    user = cookies.user
-    console.log(user)
-    return true
-  } else {
-    console.log("not logged in")
-  }
-}
-  
-  let tasks = {}
+  const [tasks, setTasks] = useState<any[]>([]); // manage tasks as state
 
-  function theRest(){
-  const reference = ref(database);
-  get(child(reference, `users/${user.uid}`)).then((snapshot) => {
-    if (snapshot.exists()) {
-      tasks = snapshot.val()
-      console.log(tasks)
+  useEffect(() => {
+    // Checking if the user is logged in
+    if (cookies.user) {
+      const fetchTasks = async () => {
+        // Getting user tasks
+        const reference = ref(database);
+        await get(child(reference, `users/${cookies.user.uid}`))
+          .then((snapshot) => {
+            if (snapshot.exists()) {
+              setTasks(snapshot.val());
+            } else {
+              console.log("No data available");
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      };
+
+      fetchTasks(); // fetching tasks for the logged-in user
     } else {
-      console.log("No data available");
+      console.log("User not logged in yet!");
     }
-  }).catch((error) => {
-    console.error(error);
-  });
-  }
-
-  function initTaskBoard(uid: string) {
-    for (const [key, value] of Object.entries(tasks)) {
-      console.log(`${key}: ${value}`);
-
-      // populate tasklists
-      const tasklists = document.getElementById("tasklists");
-      const task = document.createElement("div");
-      task.className = "bg-neutral-400 w-full h-auto rounded-lg border-2 border-[#c29b4a] p-2 flex flex-col gap-1 max-h-56";
-      tasklists?.appendChild(task);
-      
-    }
-
-    //
-
-
-  }
-
+  }, [cookies.user]); // dependency on `cookies.user`
 
   return (
     <>
-      {isLoggedIn()}
-      {theRest()}
       <Navbar />
       <div className="flex">
-        <div className="w-1/3 bg-neutral-300 grid grid-flow-row gap-4 p-4" id="tasklists">
-          <Task
-            title="Card 1"
-            description="Card 1 Description"
-            dueDate={new Date()}
-            isCompleted={true}
-            isFailed={true}
-          />
-          <Task
-            title="Card 2"
-            description="Card 2 Description"
-            dueDate={new Date()}
-            isCompleted={true}
-            isFailed={false}
-          />
-          <Task
-            title="Card 3"
-            description="Card 2 Description"
-            dueDate={new Date()}
-            isCompleted={false}
-            isFailed={false}
-          />
+        <div
+          className="w-1/3 bg-neutral-300 grid grid-flow-row gap-4 p-4"
+          id="tasklists"
+        >
+          <div className="bg-[#3a3d49] h-8 w-full rounded flex items-center p-2">
+            {tasks &&
+              tasks.map((task, index) => (
+                <Task
+                  key={index} 
+                  title={task.title}
+                  description={task.desc}
+                  dueDate={new Date()} // specify actual date field
+                  isCompleted={task.subtasks && task.subtasks[0] && task.subtasks[0].done}  // specify actual completion field
+                  isFailed={false}  // specify actual failure field
+                />
+              ))}
+          </div>
         </div>
         <div className="w-2/3 bg-[#717274] p-2">
-          <Detail
-            title="Card 1"
-            dueDate={new Date()}
-            shortDescription="Card 1 Short Description"
-            description="Card 1 Description"
-            priority={Priority.Low}
-          />
+          {/* TODO: put detailed view here */}
         </div>
       </div>
     </>
