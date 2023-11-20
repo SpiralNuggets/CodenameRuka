@@ -63,10 +63,9 @@ const Index = () => {
 
   const handleAddTask = async () => {
     const newTask = {
-      title: "New Task", // You can set default values for the new task
+      title: "New Task",
       desc: "",
       priority: Priority.Low,
-      // Add other properties as needed
     };
 
     const reference = ref(database);
@@ -94,10 +93,10 @@ const Index = () => {
       <Navbar />
       <div className="flex">
         <div
-          className="w-1/3 bg-neutral-300 grid grid-flow-row gap-4 p-4"
+          className="w-1/3 bg-neutral-300 p-4"
           id="tasklists"
         >
-          <div className="bg-[#3a3d49] w-full rounded flex items-center p-2">
+          <div className="bg-[#3a3d49] w-full rounded p-2">
             {tasks &&
               tasks.map((task, index) => (
                 <Task
@@ -133,7 +132,7 @@ const Index = () => {
                 ? currentTask.priority
                 : Priority.Low
             }
-            onUpdate={handleUpdateTask} // Pass the update function to the Detail component
+            onUpdate={handleUpdateTask}
           />
         </div>
       </div>
