@@ -32,11 +32,6 @@ const Task = ({
       <div className="bg-[#3a3d49] h-28 w-full rounded flex p-2">
         <p className="text-white">{description}</p>
       </div>
-      <div className="flex items-center mt-1">
-        <div className="grow">
-          <BsThreeDots className="text-[#3a3d49] text-2xl" />
-        </div>
-      </div>
     </div>
   );
 };
