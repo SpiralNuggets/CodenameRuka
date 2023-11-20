@@ -1,5 +1,4 @@
 import React from "react";
-
 import { FiFlag } from "react-icons/fi";
 import { BsThreeDots } from "react-icons/bs";
 
@@ -10,6 +9,9 @@ interface TaskProps {
   isFailed?: boolean;
   isCompleted?: boolean;
   handleClick?: () => void;
+  onFailedToggle?: (taskId: string, isFailed: boolean) => void;
+  onCompletedToggle?: (taskId: string, isCompleted: boolean) => void;
+  taskId: string; // Unique identifier for the task
 }
 
 const Task = ({
@@ -18,12 +20,23 @@ const Task = ({
   description = "",
   isFailed = false,
   isCompleted = false,
-  handleClick = () => {},  // Provided a default empty function in case handleClick is not provided as a prop
+  handleClick = () => {},
+  onFailedToggle = () => {},
+  onCompletedToggle = () => {},
+  taskId,
 }: TaskProps) => {
+  const handleFailedToggle = () => {
+    onFailedToggle(taskId, !isFailed);
+  };
+
+  const handleCompletedToggle = () => {
+    onCompletedToggle(taskId, !isCompleted);
+  };
+
   return (
-    <div 
-      className="bg-neutral-400 w-full h-auto rounded-lg border-2 border-[#c29b4a] p-2 flex flex-col gap-1 max-h-56 mb-2" 
-      onClick={handleClick} // Added onClick event here
+    <div
+      className="bg-neutral-400 w-full h-auto rounded-lg border-2 border-[#c29b4a] p-2 flex flex-col gap-1 max-h-56 mb-2"
+      onClick={handleClick}
     >
       <div className="bg-[#3a3d49] h-8 w-full rounded flex items-center p-2">
         <p className="text-white grow">{title}</p>
@@ -44,6 +57,7 @@ const Task = ({
             <input
               type="checkbox"
               checked={isFailed}
+              onChange={handleFailedToggle}
               className="checkbox checkbox-warning"
             />
             <span className="label-text text-black">Failed</span>
@@ -52,6 +66,7 @@ const Task = ({
             <input
               type="checkbox"
               checked={isCompleted}
+              onChange={handleCompletedToggle}
               className="checkbox checkbox-warning"
             />
             <span className="label-text text-black">Completed</span>

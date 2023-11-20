@@ -1,7 +1,7 @@
 // Index.jsx
 import React, { useState, useEffect } from "react";
 import { database } from "@/firebase";
-import { ref, get, set, child, push } from "firebase/database";
+import { ref, get, set, child } from "firebase/database";
 import { Detail, Navbar, Task } from "@/components";
 import { useCookies } from "react-cookie";
 
@@ -61,39 +61,63 @@ const Index = () => {
     setCurrentTask(updatedTask);
   };
 
+  const handleFailedToggle = async (taskId: string, isFailed: boolean) => {
+    // Update the tasks array with the new failed state
+    const updatedTasks = tasks.map((task) =>
+      task.key === taskId ? { ...task, isFailed } : task
+    );
+
+    // Update the tasks array in the database
+    const reference = ref(database);
+    await set(child(reference, `users/${cookies.user.uid}`), updatedTasks);
+
+    // Update tasks in the state
+    setTasks(updatedTasks);
+  };
+
+  const handleCompletedToggle = async (taskId: string, isCompleted: boolean) => {
+    // Update the tasks array with the new completed state
+    const updatedTasks = tasks.map((task) =>
+      task.key === taskId ? { ...task, isCompleted } : task
+    );
+
+    // Update the tasks array in the database
+    const reference = ref(database);
+    await set(child(reference, `users/${cookies.user.uid}`), updatedTasks);
+
+    // Update tasks in the state
+    setTasks(updatedTasks);
+  };
+
   const handleAddTask = async () => {
+    // Create a new task object
     const newTask = {
       title: "New Task",
       desc: "",
+      shortDesc: "",
       priority: Priority.Low,
+      isCompleted: false,
+      isFailed: false,
     };
 
+    // Add this new task to the tasks array
+    const updatedTasks = [...tasks, newTask];
+
+    // Update the tasks array in the database
     const reference = ref(database);
-    const newTaskRef = push(child(reference, `users/${cookies.user.uid}`));
-    const newTaskKey = newTaskRef.key;
+    await set(child(reference, `users/${cookies.user.uid}`), updatedTasks);
 
-    if (newTaskKey) {
-      // Update the new task in the tasks array
-      const updatedTasks = [...tasks, { ...newTask, key: newTaskKey }];
-
-      // Filter out undefined values
-      const filteredTasks = updatedTasks.filter(Boolean);
-
-      // Update the new tasks array to the database
-      await set(child(reference, `users/${cookies.user.uid}`), filteredTasks);
-
-      // Update tasks and currentTask in the state
-      setTasks(filteredTasks);
-      setCurrentTask({ ...newTask, key: newTaskKey });
-    }
-  };
+    // Update tasks and currentTask in the state
+    setTasks(updatedTasks);
+    setCurrentTask(newTask);
+  }
 
   return (
     <>
       <Navbar onAddTask={handleAddTask} />
       <div className="flex">
         <div
-          className="w-1/3 bg-neutral-300 p-4 overflow-y-auto max-h-screen" // Set max height and enable vertical scrolling
+          className="w-1/3 bg-neutral-300 p-4 overflow-y-auto max-h-screen"
           id="tasklists"
         >
           <div className="bg-[#3a3d49] w-full rounded p-2">
@@ -104,12 +128,16 @@ const Index = () => {
                   title={task?.title || "Default Title"}
                   description={task?.desc || ""}
                   dueDate={new Date()}
-                  isCompleted={
-                    task?.subtasks &&
-                    task.subtasks[0] &&
-                    task.subtasks[0].done
-                  }
+                  isCompleted={task?.isCompleted || false}
+                  isFailed={task?.isFailed || false}
                   handleClick={() => handleSelectTask(task)}
+                  onFailedToggle={(taskId, isFailed) =>
+                    handleFailedToggle(taskId, isFailed)
+                  }
+                  onCompletedToggle={(taskId, isCompleted) =>
+                    handleCompletedToggle(taskId, isCompleted)
+                  }
+                  taskId={task.key}
                 />
               ))}
           </div>
