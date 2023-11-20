@@ -81,7 +81,7 @@ const Register = () => {
           variants={fadeAnimation}
           transition={{ duration: 0.6 }}
         >
-          <h1 className="text-4xl text-white font-medium">Codename Ruka</h1>
+          <h1 className="text-4xl text-black font-medium">Codename Ruka</h1>
         </motion.div>
         <div className="w-64 sm:w-80 md:w-[30rem] bg-neutral-300 rounded-lg flex flex-col items-center px-6 pb-6 pt-2 gap-6">
           <Formik
