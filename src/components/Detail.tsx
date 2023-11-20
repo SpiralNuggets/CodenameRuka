@@ -28,6 +28,7 @@ const Detail = ({
     <Formik
       initialValues={{ title, dueDate, shortDescription, description, priority }}
       onSubmit={values => { /* implement your submission logic here */ }}
+      enableReinitialize
     >
       {({ values, setFieldValue }) => (
         <Form className="flex flex-col gap-y-4">
