@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FiFlag } from "react-icons/fi";
 import { BsThreeDots } from "react-icons/bs";
 
@@ -18,18 +18,23 @@ const Task = ({
   title = () => "New Card",
   dueDate = new Date(),
   description = "",
-  isFailed = false,
-  isCompleted = false,
+  isFailed: initialIsFailed = false,
+  isCompleted: initialIsCompleted = false,
   handleClick = () => {},
   onFailedToggle = () => {},
   onCompletedToggle = () => {},
   taskId,
 }: TaskProps) => {
+  const [isFailed, setIsFailed] = useState(initialIsFailed);
+  const [isCompleted, setIsCompleted] = useState(initialIsCompleted);
+
   const handleFailedToggle = () => {
+    setIsFailed(!isFailed);
     onFailedToggle(taskId, !isFailed);
   };
 
   const handleCompletedToggle = () => {
+    setIsCompleted(!isCompleted);
     onCompletedToggle(taskId, !isCompleted);
   };
 
