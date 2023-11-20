@@ -1,4 +1,4 @@
-// Index.jsx
+// Index.tsx
 import React, { useState, useEffect } from "react";
 import { database } from "@/firebase";
 import { ref, get, set, child } from "firebase/database";
@@ -111,40 +111,48 @@ const Index = () => {
     // Update tasks and currentTask in the state
     setTasks(updatedTasks);
     setCurrentTask(newTask);
-  }
+  };
+
+  const handleLogout = () => {
+    // Remove the user cookie
+    removeCookie("user");
+
+    // Redirect to the login page
+    window.location.href = "/login";
+  };
 
   return (
     <>
-      <Navbar onAddTask={handleAddTask} />
+      <Navbar onAddTask={handleAddTask} onLogout={handleLogout} />
       <div className="flex">
         <div
           className="w-1/3 bg-neutral-300 p-4 overflow-y-auto max-h-screen"
           id="tasklists"
         >
           <div className="bg-[#3a3d49] w-full rounded p-2">
-          {tasks &&
-  tasks.map((task, index) => (
-    <Task
-      key={index}
-      title={task?.title || "Default Title"}
-      description={task?.description || ""}
-      dueDate={
-        task?.dueDate
-          ? new Date(task.dueDate)  // Convert the string to a Date object
-          : new Date()
-      }
-      isCompleted={task?.isCompleted || false}
-      isFailed={task?.isFailed || false}
-      handleClick={() => handleSelectTask(task)}
-      onFailedToggle={(taskId, isFailed) =>
-        handleFailedToggle(taskId, isFailed)
-      }
-      onCompletedToggle={(taskId, isCompleted) =>
-        handleCompletedToggle(taskId, isCompleted)
-      }
-      taskId={task.key}
-    />
-  ))}
+            {tasks &&
+              tasks.map((task, index) => (
+                <Task
+                  key={index}
+                  title={task?.title || "Default Title"}
+                  description={task?.description || ""}
+                  dueDate={
+                    task?.dueDate
+                      ? new Date(task.dueDate) // Convert the string to a Date object
+                      : new Date()
+                  }
+                  isCompleted={task?.isCompleted || false}
+                  isFailed={task?.isFailed || false}
+                  handleClick={() => handleSelectTask(task)}
+                  onFailedToggle={(taskId, isFailed) =>
+                    handleFailedToggle(taskId, isFailed)
+                  }
+                  onCompletedToggle={(taskId, isCompleted) =>
+                    handleCompletedToggle(taskId, isCompleted)
+                  }
+                  taskId={task.key}
+                />
+              ))}
           </div>
         </div>
         <div className="w-2/3 bg-[#717274] p-2">
