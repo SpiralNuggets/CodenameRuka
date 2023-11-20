@@ -1,6 +1,7 @@
+// Index.jsx
 import React, { useState, useEffect } from "react";
 import { database } from "@/firebase";
-import { ref, get, set, child } from "firebase/database";
+import { ref, get, set, child, push } from "firebase/database";
 import { Detail, Navbar, Task } from "@/components";
 import { useCookies } from "react-cookie";
 
@@ -60,6 +61,31 @@ const Index = () => {
     setCurrentTask(updatedTask);
   };
 
+  const handleAddTask = async () => {
+    const newTask = {
+      title: "New Task", // You can set default values for the new task
+      desc: "",
+      priority: Priority.Low,
+      // Add other properties as needed
+    };
+
+    const reference = ref(database);
+    const newTaskRef = push(child(reference, `users/${cookies.user.uid}`));
+    const newTaskKey = newTaskRef.key;
+
+    if (newTaskKey) {
+      // Update the new task in the tasks array
+      const updatedTasks = [...tasks, { ...newTask, key: newTaskKey }];
+
+      // Update the new tasks array to the database
+      await set(child(reference, `users/${cookies.user.uid}`), updatedTasks);
+
+      // Update tasks and currentTask in the state
+      setTasks(updatedTasks);
+      setCurrentTask({ ...newTask, key: newTaskKey });
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -85,6 +111,13 @@ const Index = () => {
                 />
               ))}
           </div>
+          {/* Add Task Button */}
+          <button
+            onClick={handleAddTask}
+            className="btn btn-primary mt-4"
+          >
+            Add Task
+          </button>
         </div>
         <div className="w-2/3 bg-[#717274] p-2">
           <Detail
