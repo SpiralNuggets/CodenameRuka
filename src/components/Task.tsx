@@ -9,6 +9,7 @@ interface TaskProps {
   description?: string;
   isFailed?: boolean;
   isCompleted?: boolean;
+  handleClick?: () => void;
 }
 
 const Task = ({

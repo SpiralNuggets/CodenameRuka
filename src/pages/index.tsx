@@ -13,6 +13,7 @@ enum Priority {
 const Index = () => {
   const [cookies, setCookie, removeCookie] = useCookies(["user"]);
   const [tasks, setTasks] = useState<any[]>([]); // manage tasks as state
+  const [currentTask, setCurrentTask] = useState<any>({}); // manage current detail task as state
 
   useEffect(() => {
     // Checking if the user is logged in
@@ -23,7 +24,9 @@ const Index = () => {
         await get(child(reference, `users/${cookies.user.uid}`))
           .then((snapshot) => {
             if (snapshot.exists()) {
-              setTasks(snapshot.val());
+              const fetchedTasks = snapshot.val();
+              setTasks(fetchedTasks);
+              setCurrentTask(fetchedTasks[0] || {}); // Set first task as current task initially
             } else {
               console.log("No data available");
             }
@@ -39,6 +42,10 @@ const Index = () => {
     }
   }, [cookies.user]); // dependency on `cookies.user`
 
+  const handleSelectTask = (task: any) => {
+    setCurrentTask(task); // update current task when a task is clicked
+  };
+
   return (
     <>
       <Navbar />
@@ -47,7 +54,7 @@ const Index = () => {
           className="w-1/3 bg-neutral-300 grid grid-flow-row gap-4 p-4"
           id="tasklists"
         >
-          <div className="bg-[#3a3d49] h-8 w-full rounded flex items-center p-2">
+          <div className="bg-[#3a3d49] w-full rounded flex items-center p-2">
             {tasks &&
               tasks.map((task, index) => (
                 <Task
@@ -57,16 +64,23 @@ const Index = () => {
                   dueDate={new Date()} // specify actual date field
                   isCompleted={task.subtasks && task.subtasks[0] && task.subtasks[0].done}  // specify actual completion field
                   isFailed={false}  // specify actual failure field
+                  handleClick={() => handleSelectTask(task)} // add click handler
                 />
               ))}
           </div>
         </div>
         <div className="w-2/3 bg-[#717274] p-2">
-          {/* TODO: put detailed view here */}
+        <Detail
+            title={currentTask.title || 'Select a task'} // set title from current task or default text
+            dueDate={new Date() || null}  // specify actual due date field
+            shortDescription={currentTask.shortDesc || ''} // set short description from current task
+            description={currentTask.desc || ''} // set description from current task
+            priority={typeof currentTask.priority !== 'undefined' ? currentTask.priority : Priority.Low}  // set priority from current task or default to low
+          />
         </div>
       </div>
     </>
   );
 };
 
-export default Index;
+export default Index; 
