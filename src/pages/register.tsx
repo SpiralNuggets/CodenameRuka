@@ -39,8 +39,15 @@ const Register = () => {
       
       // Customize the user data as needed
       const userData = {
-        email: user.email,
-        // Add other user properties...
+        0: [
+          {
+            title: "Welcome to Codename Ruka!",
+            dueDate: new Date(),
+            shortDescription: "This is your first task!",
+            description: "You can edit this task or delete it and create a new one.",
+            priority: 0,
+          },
+        ]
       };
   
       // Set user data in the database
