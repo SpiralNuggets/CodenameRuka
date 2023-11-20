@@ -93,7 +93,7 @@ const Index = () => {
       <Navbar />
       <div className="flex">
         <div
-          className="w-1/3 bg-neutral-300 p-4"
+          className="w-1/3 bg-neutral-300 p-4 overflow-y-auto max-h-screen" // Set max height and enable vertical scrolling
           id="tasklists"
         >
           <div className="bg-[#3a3d49] w-full rounded p-2">
