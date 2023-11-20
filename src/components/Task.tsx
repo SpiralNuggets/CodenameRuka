@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { FiFlag } from "react-icons/fi";
-import { BsThreeDots } from "react-icons/bs";
+import { FiFlag, FiTrash } from "react-icons/fi";
 
 interface TaskProps {
   title?: string | (() => string);
@@ -11,31 +10,37 @@ interface TaskProps {
   handleClick?: () => void;
   onFailedToggle?: (taskId: string, isFailed: boolean) => void;
   onCompletedToggle?: (taskId: string, isCompleted: boolean) => void;
-  taskId: string; // Unique identifier for the task
+  onDelete?: (taskId: string) => void;
+  taskId: string;
 }
 
 const Task = ({
   title = () => "New Card",
   dueDate = new Date(),
   description = "",
-  isFailed: initialIsFailed = false,
-  isCompleted: initialIsCompleted = false,
+  isFailed = false,
+  isCompleted = false,
   handleClick = () => {},
   onFailedToggle = () => {},
   onCompletedToggle = () => {},
+  onDelete = () => {},
   taskId,
 }: TaskProps) => {
-  const [isFailed, setIsFailed] = useState(initialIsFailed);
-  const [isCompleted, setIsCompleted] = useState(initialIsCompleted);
+  const [isFailedLocal, setIsFailedLocal] = useState(isFailed);
+  const [isCompletedLocal, setIsCompletedLocal] = useState(isCompleted);
 
   const handleFailedToggle = () => {
-    setIsFailed(!isFailed);
-    onFailedToggle(taskId, !isFailed);
+    setIsFailedLocal(!isFailedLocal);
+    onFailedToggle(taskId, !isFailedLocal);
   };
 
   const handleCompletedToggle = () => {
-    setIsCompleted(!isCompleted);
-    onCompletedToggle(taskId, !isCompleted);
+    setIsCompletedLocal(!isCompletedLocal);
+    onCompletedToggle(taskId, !isCompletedLocal);
+  };
+
+  const handleDelete = () => {
+    onDelete(taskId);
   };
 
   return (
@@ -53,15 +58,15 @@ const Task = ({
       <div className="bg-[#3a3d49] h-28 w-full rounded flex p-2">
         <p className="text-white">{description}</p>
       </div>
-      <div className="flex items-center mt-1">
-        <div className="grow">
-          <BsThreeDots className="text-[#3a3d49] text-2xl" />
+      <div className="flex items-center mt-2">
+        <div className="cursor-pointer mr-2" onClick={handleDelete}>
+          <FiTrash className="text-[#3a3d49] text-2xl" />
         </div>
-        <div className="flex gap-x-8">
+        <div className="flex gap-x-8 ml-auto">
           <label className="label cursor-pointer gap-x-2 !p-0">
             <input
               type="checkbox"
-              checked={isFailed}
+              checked={isFailedLocal}
               onChange={handleFailedToggle}
               className="checkbox checkbox-warning"
             />
@@ -70,7 +75,7 @@ const Task = ({
           <label className="label cursor-pointer gap-x-2 !p-0">
             <input
               type="checkbox"
-              checked={isCompleted}
+              checked={isCompletedLocal}
               onChange={handleCompletedToggle}
               className="checkbox checkbox-warning"
             />
