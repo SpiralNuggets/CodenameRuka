@@ -8,6 +8,7 @@ COPY . .
 
 # Install dependencies
 RUN npm install
+RUN npm build
 
 # Expose port 3000
 EXPOSE 3000
