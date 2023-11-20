@@ -44,9 +44,16 @@ const Index = () => {
   function initTaskBoard(uid: string) {
     for (const [key, value] of Object.entries(tasks)) {
       console.log(`${key}: ${value}`);
+
+      // populate tasklists
+      const tasklists = document.getElementById("tasklists");
+      const task = document.createElement("div");
+      task.className = "bg-neutral-400 w-full h-auto rounded-lg border-2 border-[#c29b4a] p-2 flex flex-col gap-1 max-h-56";
+      tasklists?.appendChild(task);
+      
     }
 
-    // TODO: DOM Manipulation bullshit
+    //
 
 
   }
