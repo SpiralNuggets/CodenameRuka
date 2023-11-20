@@ -1,9 +1,9 @@
+// Index.tsx
 import React, { useState, useEffect } from "react";
 import { database } from "@/firebase";
 import { ref, get, set, child } from "firebase/database";
 import { Detail, Navbar, Task } from "@/components";
 import { useCookies } from "react-cookie";
-import { FiTrash } from "react-icons/fi";
 
 enum Priority {
   Low,
@@ -49,7 +49,7 @@ const Index = () => {
   const handleUpdateTask = async (updatedTask: any) => {
     // Update target task in tasks array
     const updatedTasks = tasks.map((task) =>
-      task.key === updatedTask.key ? updatedTask : task
+      task.title === currentTask.title ? updatedTask : task
     );
 
     // Update this updatedTasks array to the database
@@ -67,17 +67,12 @@ const Index = () => {
       task.key === taskId ? { ...task, isFailed } : task
     );
 
-    // Update the tasks array in the database with unique keys
-    const tasksWithKeys = updatedTasks.map((task, index) => ({
-      ...task,
-      key: `task_${index}`, // You can use a better way to generate unique keys
-    }));
-
+    // Update the tasks array in the database
     const reference = ref(database);
-    await set(child(reference, `users/${cookies.user.uid}`), tasksWithKeys);
+    await set(child(reference, `users/${cookies.user.uid}`), updatedTasks);
 
     // Update tasks in the state
-    setTasks(tasksWithKeys);
+    setTasks(updatedTasks);
   };
 
   const handleCompletedToggle = async (taskId: string, isCompleted: boolean) => {
@@ -86,40 +81,17 @@ const Index = () => {
       task.key === taskId ? { ...task, isCompleted } : task
     );
 
-    // Update the tasks array in the database with unique keys
-    const tasksWithKeys = updatedTasks.map((task, index) => ({
-      ...task,
-      key: `task_${index}`, // You can use a better way to generate unique keys
-    }));
-
+    // Update the tasks array in the database
     const reference = ref(database);
-    await set(child(reference, `users/${cookies.user.uid}`), tasksWithKeys);
+    await set(child(reference, `users/${cookies.user.uid}`), updatedTasks);
 
     // Update tasks in the state
-    setTasks(tasksWithKeys);
-  };
-
-  const handleDeleteTask = async (taskId: string) => {
-    // Filter out the task to be deleted
-    const updatedTasks = tasks.filter((task) => task.key !== taskId);
-
-    // Update the tasks array in the database with unique keys
-    const tasksWithKeys = updatedTasks.map((task, index) => ({
-      ...task,
-      key: `task_${index}`, // You can use a better way to generate unique keys
-    }));
-
-    const reference = ref(database);
-    await set(child(reference, `users/${cookies.user.uid}`), tasksWithKeys);
-
-    // Update tasks in the state
-    setTasks(tasksWithKeys);
+    setTasks(updatedTasks);
   };
 
   const handleAddTask = async () => {
     // Create a new task object
     const newTask = {
-      key: `task_${tasks.length}`, // You can use a better way to generate unique keys
       title: "New Task",
       description: "",
       shortDescription: "",
@@ -132,17 +104,12 @@ const Index = () => {
     // Add this new task to the tasks array
     const updatedTasks = [...tasks, newTask];
 
-    // Update the tasks array in the database with unique keys
-    const tasksWithKeys = updatedTasks.map((task, index) => ({
-      ...task,
-      key: `task_${index}`, // You can use a better way to generate unique keys
-    }));
-
+    // Update the tasks array in the database
     const reference = ref(database);
-    await set(child(reference, `users/${cookies.user.uid}`), tasksWithKeys);
+    await set(child(reference, `users/${cookies.user.uid}`), updatedTasks);
 
     // Update tasks and currentTask in the state
-    setTasks(tasksWithKeys);
+    setTasks(updatedTasks);
     setCurrentTask(newTask);
   };
 
@@ -164,9 +131,9 @@ const Index = () => {
         >
           <div className="bg-[#3a3d49] w-full rounded p-2">
             {tasks &&
-              tasks.map((task) => (
+              tasks.map((task, index) => (
                 <Task
-                  key={task.key}
+                  key={index}
                   title={task?.title || "Default Title"}
                   description={task?.description || ""}
                   dueDate={
@@ -183,7 +150,6 @@ const Index = () => {
                   onCompletedToggle={(taskId, isCompleted) =>
                     handleCompletedToggle(taskId, isCompleted)
                   }
-                  onDelete={(taskId) => handleDeleteTask(taskId)} // Pass the onDelete prop
                   taskId={task.key}
                 />
               ))}
