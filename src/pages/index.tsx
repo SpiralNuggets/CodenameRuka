@@ -49,7 +49,7 @@ const Index = () => {
   const handleUpdateTask = async (updatedTask: any) => {
     // Update target task in tasks array
     const updatedTasks = tasks.map((task) =>
-      task.title === currentTask.title ? updatedTask : task
+      task.key === updatedTask.key ? updatedTask : task
     );
 
     // Update this updatedTasks array to the database
@@ -67,12 +67,17 @@ const Index = () => {
       task.key === taskId ? { ...task, isFailed } : task
     );
 
-    // Update the tasks array in the database
+    // Update the tasks array in the database with unique keys
+    const tasksWithKeys = updatedTasks.map((task, index) => ({
+      ...task,
+      key: `task_${index}`, // You can use a better way to generate unique keys
+    }));
+
     const reference = ref(database);
-    await set(child(reference, `users/${cookies.user.uid}`), updatedTasks);
+    await set(child(reference, `users/${cookies.user.uid}`), tasksWithKeys);
 
     // Update tasks in the state
-    setTasks(updatedTasks);
+    setTasks(tasksWithKeys);
   };
 
   const handleCompletedToggle = async (taskId: string, isCompleted: boolean) => {
@@ -81,17 +86,23 @@ const Index = () => {
       task.key === taskId ? { ...task, isCompleted } : task
     );
 
-    // Update the tasks array in the database
+    // Update the tasks array in the database with unique keys
+    const tasksWithKeys = updatedTasks.map((task, index) => ({
+      ...task,
+      key: `task_${index}`, // You can use a better way to generate unique keys
+    }));
+
     const reference = ref(database);
-    await set(child(reference, `users/${cookies.user.uid}`), updatedTasks);
+    await set(child(reference, `users/${cookies.user.uid}`), tasksWithKeys);
 
     // Update tasks in the state
-    setTasks(updatedTasks);
+    setTasks(tasksWithKeys);
   };
 
   const handleAddTask = async () => {
     // Create a new task object
     const newTask = {
+      key: `task_${tasks.length}`, // You can use a better way to generate unique keys
       title: "New Task",
       description: "",
       shortDescription: "",
@@ -104,12 +115,17 @@ const Index = () => {
     // Add this new task to the tasks array
     const updatedTasks = [...tasks, newTask];
 
-    // Update the tasks array in the database
+    // Update the tasks array in the database with unique keys
+    const tasksWithKeys = updatedTasks.map((task, index) => ({
+      ...task,
+      key: `task_${index}`, // You can use a better way to generate unique keys
+    }));
+
     const reference = ref(database);
-    await set(child(reference, `users/${cookies.user.uid}`), updatedTasks);
+    await set(child(reference, `users/${cookies.user.uid}`), tasksWithKeys);
 
     // Update tasks and currentTask in the state
-    setTasks(updatedTasks);
+    setTasks(tasksWithKeys);
     setCurrentTask(newTask);
   };
 
@@ -131,9 +147,9 @@ const Index = () => {
         >
           <div className="bg-[#3a3d49] w-full rounded p-2">
             {tasks &&
-              tasks.map((task, index) => (
+              tasks.map((task) => (
                 <Task
-                  key={index}
+                  key={task.key}
                   title={task?.title || "Default Title"}
                   description={task?.description || ""}
                   dueDate={
