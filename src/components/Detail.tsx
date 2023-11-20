@@ -1,6 +1,7 @@
 import React from "react";
 import { Formik, Field, Form } from "formik";
 import { FiFlag } from "react-icons/fi";
+import { set } from "firebase/database"; // Import set function from Firebase
 
 enum Priority {
   Low,
@@ -14,6 +15,7 @@ interface DetailProps {
   shortDescription?: string;
   description?: string;
   priority?: Priority;
+  onUpdate: (updatedTask: any) => Promise<void>;
 }
 
 const Detail = ({
@@ -22,12 +24,18 @@ const Detail = ({
   shortDescription = "",
   description = "",
   priority = Priority.Low,
+  onUpdate,
 }: DetailProps) => {
-
   return (
     <Formik
       initialValues={{ title, dueDate, shortDescription, description, priority }}
-      onSubmit={values => { /* implement your submission logic here */ }}
+      onSubmit={(values, { resetForm }) => {
+        // Call the onUpdate function with updated values
+        onUpdate(values).then(() => {
+          // Reset the form after successful update
+          resetForm();
+        });
+      }}
       enableReinitialize
     >
       {({ values, setFieldValue, handleSubmit }) => (
@@ -74,32 +82,29 @@ const Detail = ({
               className={`text-[#50af53] text-2xl cursor-pointer ${
                 values.priority === Priority.Low && "fill-[#50af53]"
               }`}
-              onClick={() => setFieldValue('priority', Priority.Low)}
+              onClick={() => setFieldValue("priority", Priority.Low)}
             />
             <FiFlag
               className={`text-[#c29b4a] text-2xl cursor-pointer ${
                 values.priority === Priority.Medium && "fill-[#c29b4a]"
               }`}
-              onClick={() => setFieldValue('priority', Priority.Medium)}
+              onClick={() => setFieldValue("priority", Priority.Medium)}
             />
             <FiFlag
               className={`text-[#e4481b] text-2xl cursor-pointer ${
                 values.priority === Priority.High && "fill-[#e4481b]"
               }`}
-              onClick={() => setFieldValue('priority', Priority.High)}
+              onClick={() => setFieldValue("priority", Priority.High)}
             />
           </div>
+
+          {/* Update Button */}
           <button
-  type="button"
-  onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    handleSubmit();
-  }}
-  className="btn btn-primary mt-4"
-  style={{ width: "100px" }} // Adjust the width as needed
->
-  Update
-</button>
+            type="submit" // Change type to submit
+            className="btn btn-primary mt-4"
+          >
+            Update
+          </button>
         </Form>
       )}
     </Formik>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { database } from "@/firebase";
-import { ref, onValue, child, get, set, remove } from "firebase/database";
+import { ref, get, set, child } from "firebase/database";
 import { Detail, Navbar, Task } from "@/components";
 import { useCookies } from "react-cookie";
 
@@ -12,21 +12,19 @@ enum Priority {
 
 const Index = () => {
   const [cookies, setCookie, removeCookie] = useCookies(["user"]);
-  const [tasks, setTasks] = useState<any[]>([]); // manage tasks as state
-  const [currentTask, setCurrentTask] = useState<any>({}); // manage current detail task as state
+  const [tasks, setTasks] = useState<any[]>([]);
+  const [currentTask, setCurrentTask] = useState<any>({});
 
   useEffect(() => {
-    // Checking if the user is logged in
     if (cookies.user) {
       const fetchTasks = async () => {
-        // Getting user tasks
         const reference = ref(database);
         await get(child(reference, `users/${cookies.user.uid}`))
           .then((snapshot) => {
             if (snapshot.exists()) {
               const fetchedTasks = snapshot.val();
               setTasks(fetchedTasks);
-              setCurrentTask(fetchedTasks[0] || {}); // Set first task as current task initially
+              setCurrentTask(fetchedTasks[0] || {});
             } else {
               console.log("No data available");
             }
@@ -36,15 +34,30 @@ const Index = () => {
           });
       };
 
-      fetchTasks(); // fetching tasks for the logged-in user
+      fetchTasks();
     } else {
       console.log("User not logged in yet!");
       window.location.href = "/login";
     }
-  }, [cookies.user]); // dependency on `cookies.user`
+  }, [cookies.user]);
 
   const handleSelectTask = (task: any) => {
-    setCurrentTask(task); // update current task when a task is clicked
+    setCurrentTask(task);
+  };
+
+  const handleUpdateTask = async (updatedTask: any) => {
+    // Update target task in tasks array
+    const updatedTasks = tasks.map((task) =>
+      task.title === currentTask.title ? updatedTask : task
+    );
+
+    // Update this updatedTasks array to the database
+    const reference = ref(database);
+    await set(child(reference, `users/${cookies.user.uid}`), updatedTasks);
+
+    // Update tasks and currentTask in the state
+    setTasks(updatedTasks);
+    setCurrentTask(updatedTask);
   };
 
   return (
@@ -59,24 +72,32 @@ const Index = () => {
             {tasks &&
               tasks.map((task, index) => (
                 <Task
-                  key={index} 
-                  title={task.title}
-                  description={task.desc}
-                  dueDate={new Date()} // specify actual date field
-                  isCompleted={task.subtasks && task.subtasks[0] && task.subtasks[0].done}  // specify actual completion field
-                  isFailed={false}  // specify actual failure field
-                  handleClick={() => handleSelectTask(task)} // add click handler
+                  key={index}
+                  title={task?.title || "Default Title"}
+                  description={task?.desc || ""}
+                  dueDate={new Date()}
+                  isCompleted={
+                    task?.subtasks &&
+                    task.subtasks[0] &&
+                    task.subtasks[0].done
+                  }
+                  handleClick={() => handleSelectTask(task)}
                 />
               ))}
           </div>
         </div>
         <div className="w-2/3 bg-[#717274] p-2">
-        <Detail
-            title={currentTask.title || 'Select a task'} // set title from current task or default text
-            dueDate={new Date() || null}  // specify actual due date field
-            shortDescription={currentTask.shortDesc || ''} // set short description from current task
-            description={currentTask.desc || ''} // set description from current task
-            priority={typeof currentTask.priority !== 'undefined' ? currentTask.priority : Priority.Low}  // set priority from current task or default to low
+          <Detail
+            title={currentTask.title || "Select a task"}
+            dueDate={new Date() || null}
+            shortDescription={currentTask.shortDesc || ""}
+            description={currentTask.desc || ""}
+            priority={
+              typeof currentTask.priority !== "undefined"
+                ? currentTask.priority
+                : Priority.Low
+            }
+            onUpdate={handleUpdateTask} // Pass the update function to the Detail component
           />
         </div>
       </div>
@@ -84,4 +105,4 @@ const Index = () => {
   );
 };
 
-export default Index; 
+export default Index;
