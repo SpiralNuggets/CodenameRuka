@@ -93,11 +93,12 @@ const Index = () => {
     // Create a new task object
     const newTask = {
       title: "New Task",
-      desc: "",
-      shortDesc: "",
+      description: "",
+      shortDescription: "",
       priority: Priority.Low,
       isCompleted: false,
       isFailed: false,
+      dueDate: new Date(),
     };
 
     // Add this new task to the tasks array
@@ -126,7 +127,7 @@ const Index = () => {
                 <Task
                   key={index}
                   title={task?.title || "Default Title"}
-                  description={task?.desc || ""}
+                  description={task?.description || ""}
                   dueDate={new Date()}
                   isCompleted={task?.isCompleted || false}
                   isFailed={task?.isFailed || false}
@@ -138,6 +139,7 @@ const Index = () => {
                     handleCompletedToggle(taskId, isCompleted)
                   }
                   taskId={task.key}
+                  
                 />
               ))}
           </div>
@@ -146,8 +148,8 @@ const Index = () => {
           <Detail
             title={currentTask.title || "Select a task"}
             dueDate={new Date() || null}
-            shortDescription={currentTask.shortDesc || ""}
-            description={currentTask.desc || ""}
+            shortDescription={currentTask.shortDescription || ""}
+            description={currentTask.description || ""}
             priority={
               typeof currentTask.priority !== "undefined"
                 ? currentTask.priority
