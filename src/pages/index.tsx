@@ -77,11 +77,14 @@ const Index = () => {
       // Update the new task in the tasks array
       const updatedTasks = [...tasks, { ...newTask, key: newTaskKey }];
 
+      // Filter out undefined values
+      const filteredTasks = updatedTasks.filter(Boolean);
+
       // Update the new tasks array to the database
-      await set(child(reference, `users/${cookies.user.uid}`), updatedTasks);
+      await set(child(reference, `users/${cookies.user.uid}`), filteredTasks);
 
       // Update tasks and currentTask in the state
-      setTasks(updatedTasks);
+      setTasks(filteredTasks);
       setCurrentTask({ ...newTask, key: newTaskKey });
     }
   };
